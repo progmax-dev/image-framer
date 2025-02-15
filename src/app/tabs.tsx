@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 
 const tabs = [
   { id: "female-hindi", label: "स्त्रीलिंग", content: "This is content for Tab 1" },
