@@ -70,6 +70,7 @@ export default function ImageOverlay() {
     const canvas = canvasRef.current;
     const link = document.createElement('a');
     link.download = 'satsang-invite.png';
+    
     if (canvas) {
       link.href = canvas.toDataURL('image/png');
     }
