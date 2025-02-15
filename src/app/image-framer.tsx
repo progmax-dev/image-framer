@@ -2,12 +2,10 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { Button } from '../components/button';
-import { evalManifestWithRetries } from "next/dist/server/load-components";
 
 export default function ImageOverlay() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  let img_parent_ref = useRef<HTMLImageElement>(null);
   const placeholderX = 35; // Adjust X position
   const placeholderY = 270; // Adjust Y position
   const placeholderWidth = 200;
