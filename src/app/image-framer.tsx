@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import im1 from '../../g-satsang.jpeg';
 import { Button } from '../components/button';
 
 export default function ImageOverlay() {
@@ -12,14 +11,15 @@ export default function ImageOverlay() {
   const placeholderY = 270; // Adjust Y position
   const placeholderWidth = 200;
   const placeholderHeight = 200;
-  const img_parent = document.createElement("img");
-  const img_logo = document.createElement("img");
-
+  let img_parent:HTMLImageElement;
+  let img_logo:HTMLImageElement;
   useEffect(() => {
+    img_logo = document.createElement("img");
     loadLogo();
   }, []);
 
   useEffect(() => {
+    img_parent = document.createElement("img");
     loadParentImage();
   }, []);
 
@@ -43,7 +43,6 @@ export default function ImageOverlay() {
   const loadParentImage = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
     img_parent.src = "https://i.ibb.co/k6r8Df8J/Whats-App-Image-2025-02-15-at-15-31-33.jpg"; // Ensure the image is inside the "public" folder
     img_parent.crossOrigin = "anonymous"; // Allows CORS images
   }
@@ -51,7 +50,6 @@ export default function ImageOverlay() {
   const loadLogo = () => {
     const canvas2 = canvasRefLogo.current;
     if (!canvas2) return;
-    const ctx = canvas2.getContext("2d");
     img_logo.src = "https://i.ibb.co/YBzfQgsL/aolf-logo-1.png"; // Ensure the image is inside the "public" folder
     img_logo.crossOrigin = "anonymous"; // Allows CORS images
   }
@@ -81,7 +79,7 @@ export default function ImageOverlay() {
     link.click();
   };
 
-  const drawOverlay = (ctx: { clearRect: (x: number, y: number, w: number, h: number) => void; drawImage: (arg0: any, arg1: number, arg2: number, arg3: number, arg4: number) => void; save: () => void; beginPath: () => void; arc: (arg0: number, arg1: number, arg2: number, arg3: number, arg4: number) => void; closePath: () => void; clip: () => void; restore: () => void; }, baseImage: any) => {
+  const drawOverlay = (ctx: { clearRect: (x: number, y: number, w: number, h: number) => void; drawImage: (arg0: HTMLImageElement, arg1: number, arg2: number, arg3: number, arg4: number) => void; save: () => void; beginPath: () => void; arc: (arg0: number, arg1: number, arg2: number, arg3: number, arg4: number) => void; closePath: () => void; clip: () => void; restore: () => void; }, baseImage: HTMLImageElement) => {
     console.log('drawoverlay')
     if (canvasRef.current === null) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
