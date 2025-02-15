@@ -6,17 +6,11 @@ import { Button } from '../components/button';
 export default function ImageOverlay() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvasRefLogo = useRef<HTMLCanvasElement>(null);
   const placeholderX = 35; // Adjust X position
   const placeholderY = 270; // Adjust Y position
   const placeholderWidth = 200;
   const placeholderHeight = 200;
   let img_parent:HTMLImageElement;
-  let img_logo:HTMLImageElement;
-  useEffect(() => {
-    img_logo = document.createElement("img");
-    loadLogo();
-  }, []);
 
   useEffect(() => {
     img_parent = document.createElement("img");
@@ -40,14 +34,10 @@ export default function ImageOverlay() {
     if (!canvas) return;
     img_parent.src = "https://i.ibb.co/k6r8Df8J/Whats-App-Image-2025-02-15-at-15-31-33.jpg"; // Ensure the image is inside the "public" folder
     img_parent.crossOrigin = "anonymous"; // Allows CORS images
-  }
-
-  const loadLogo = () => {
-    const canvas2 = canvasRefLogo.current;
-    if (!canvas2) return;
-    img_logo.src = "https://i.ibb.co/YBzfQgsL/aolf-logo-1.png"; // Ensure the image is inside the "public" folder
-    img_logo.crossOrigin = "anonymous"; // Allows CORS images
-  }
+    const ctx = canvas.getContext("2d");
+    if(ctx)
+      ctx.drawImage(img_parent, 0, 0, 500, 500);
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
