@@ -1,5 +1,8 @@
 "use client";
 import ImageFramer from "./image-framer";
+import TabsComponent from "./tabs";
+import Image from "next/image";
+
 export default function Home() {
 
   return (
