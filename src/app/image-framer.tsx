@@ -28,15 +28,10 @@ export default function ImageOverlay() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
-    console.log("load", ctx);
     if (!ctx) return;
+    img_parent = document.createElement("img");
     loadParentImage();
     drawOverlay(ctx, img_parent);
-    // img_parent.onload = () => {
-    //   if (ctx) {
-    //     drawOverlay(ctx, img_parent);
-    //   }
-    // };
   }, [uploadedImage]);
 
 
@@ -56,7 +51,6 @@ export default function ImageOverlay() {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    console.log("handleImageUpload -> files", files)
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
@@ -80,11 +74,9 @@ export default function ImageOverlay() {
   };
 
   const drawOverlay = (ctx: { clearRect: (x: number, y: number, w: number, h: number) => void; drawImage: (arg0: HTMLImageElement, arg1: number, arg2: number, arg3: number, arg4: number) => void; save: () => void; beginPath: () => void; arc: (arg0: number, arg1: number, arg2: number, arg3: number, arg4: number) => void; closePath: () => void; clip: () => void; restore: () => void; }, baseImage: HTMLImageElement) => {
-    console.log('drawoverlay')
     if (canvasRef.current === null) return;
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     ctx.drawImage(baseImage, 0, 0, 500, 500);
-    console.log("uploaded", uploadedImage);
 
     if (uploadedImage) {
       const overlayImage = document.createElement('img');
