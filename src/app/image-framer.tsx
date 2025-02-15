@@ -1,68 +1,120 @@
+"use client";
 import Image from "next/image";
-import { useState, useRef } from "react";
-import im1 from '../../satsang-g.jpeg';
+import { useState, useRef, useEffect } from "react";
+import im1 from '../../g-satsang.jpeg';
+import { Button } from '../components/button';
 
-export default function ImageFramer() {
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
+export default function ImageOverlay() {
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRefLogo = useRef<HTMLCanvasElement>(null);
+  const placeholderX = 35; // Adjust X position
+  const placeholderY = 270; // Adjust Y position
+  const placeholderWidth = 200;
+  const placeholderHeight = 200;
+  const img_parent = document.createElement("img");
+  const img_logo = document.createElement("img");
+
+  useEffect(() => {
+    loadLogo();
+  }, []);
+
+  useEffect(() => {
+    loadParentImage();
+  }, []);
+
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    console.log("load", ctx);
+    if (!ctx) return;
+    loadParentImage();
+    drawOverlay(ctx, img_parent);
+    // img_parent.onload = () => {
+    //   if (ctx) {
+    //     drawOverlay(ctx, img_parent);
+    //   }
+    // };
+  }, [uploadedImage]);
+
+
+  const loadParentImage = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    img_parent.src = "https://i.ibb.co/k6r8Df8J/Whats-App-Image-2025-02-15-at-15-31-33.jpg"; // Ensure the image is inside the "public" folder
+    img_parent.crossOrigin = "anonymous"; // Allows CORS images
+  }
+
+  const loadLogo = () => {
+    const canvas2 = canvasRefLogo.current;
+    if (!canvas2) return;
+    const ctx = canvas2.getContext("2d");
+    img_logo.src = "https://i.ibb.co/YBzfQgsL/aolf-logo-1.png"; // Ensure the image is inside the "public" folder
+    img_logo.crossOrigin = "anonymous"; // Allows CORS images
+  }
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
+    const files = event.target.files;
+    console.log("handleImageUpload -> files", files)
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageSrc(reader.result as string);
+      reader.onload = (e) => {
+        if (e.target) {
+          setUploadedImage(e.target.result as string);
+        }
       };
       reader.readAsDataURL(file);
     }
   };
+
   const handleDownload = () => {
-    console.log('hi');
     const canvas = canvasRef.current;
-    console.log(canvas);
-    if (canvas && imageSrc) {
-      const ctx = canvas.getContext('2d');
-      console.log('hello');
-      if (ctx) {
-        const baseImage = new window.Image();
-        baseImage.src = im1.src;
-        baseImage.onload = () => {
-          canvas.width = baseImage.width;
-          canvas.height = baseImage.height;
-          ctx.drawImage(baseImage, 0, 0);
-          const overlayImage = new window.Image();
-          overlayImage.src = imageSrc;
-          overlayImage.onload = () => {
-            ctx.drawImage(overlayImage, 0, 0, baseImage.width / 4, baseImage.height / 4);
-            const link = document.createElement('a');
-            link.download = 'result.png';
-            link.href = canvas.toDataURL();
-            link.click();
-          };
-        };
-      }
+    const link = document.createElement('a');
+    link.download = 'satsang-invite.png';
+    if (canvas) {
+      link.href = canvas.toDataURL('image/png');
+    }
+    link.click();
+  };
+
+  const drawOverlay = (ctx: { clearRect: (x: number, y: number, w: number, h: number) => void; drawImage: (arg0: any, arg1: number, arg2: number, arg3: number, arg4: number) => void; save: () => void; beginPath: () => void; arc: (arg0: number, arg1: number, arg2: number, arg3: number, arg4: number) => void; closePath: () => void; clip: () => void; restore: () => void; }, baseImage: any) => {
+    console.log('drawoverlay')
+    if (canvasRef.current === null) return;
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    ctx.drawImage(baseImage, 0, 0, 500, 500);
+    console.log("uploaded", uploadedImage);
+
+    if (uploadedImage) {
+      const overlayImage = document.createElement('img');
+      overlayImage.src = uploadedImage;
+      overlayImage.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(
+          placeholderX + placeholderWidth / 2,
+          placeholderY + placeholderHeight / 2,
+          placeholderWidth / 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(overlayImage, placeholderX, placeholderY, placeholderWidth, placeholderHeight);
+        ctx.restore();
+      };
     }
   };
-  return (
-    <div className="flex flex-col items-center p-8 min-h-screen bg-gray-100">
-      <h1 className="text-5xl font-extrabold mb-10 text-blue-600">Image Framer</h1>
-      <Image src={im1} alt="Sample Image" className="mb-8" />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        className="mb-4"
-      />
-      {imageSrc && (
-        <button
-          onClick={handleDownload}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Download Resultant Image
-        </button>
-      )}
-            <canvas ref={canvasRef} className="hidden"></canvas>
 
+  return (
+    <div className="flex flex-col items-center gap-4 p-4">
+      <Image src="https://i.ibb.co/YBzfQgsL/aolf-logo-1.png" width={200} height={50} alt="123" className="border rounded-lg" />
+      <canvas ref={canvasRef} width={500} height={500} className="border rounded-lg" />
+      <input placeholder="Upload Image" type="file" accept="image/*" onChange={handleImageUpload} />
+      <Button onClick={handleDownload}>Download Image</Button>
     </div>
   );
 }
