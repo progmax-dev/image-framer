@@ -1,8 +1,8 @@
 "use client";
 
 const tabs = [
-  { id: "female-hindi", label: "स्त्रीलिंग", content: "This is content for Tab 1" },
-  { id: "male-hindi", label: "पुल्लिंग", content: "This is content for Tab 2" }
+  { id: "female-hindi", label: "स्त्री", content: "This is content for Tab 1" },
+  { id: "male-hindi", label: "पुरुष", content: "This is content for Tab 2" }
 ];
 
 export default function TabsComponent({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) {
