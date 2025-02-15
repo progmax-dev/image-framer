@@ -10,7 +10,6 @@ export default function ImageOverlay() {
   const placeholderY = 270; // Adjust Y position
   const placeholderWidth = 200;
   const placeholderHeight = 200;
-  const [loading, setLoading] = useState(true); // State to track loading
   let img_parent: HTMLImageElement;
 
   useEffect(() => {
@@ -38,7 +37,6 @@ export default function ImageOverlay() {
     const ctx = canvas.getContext("2d");
     if (ctx) {
       img_parent.onload = () => {
-        setLoading(false); // Hide loader if image fails to load
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawings
         ctx.drawImage(img_parent, 0, 0, 500, 500);
       }
