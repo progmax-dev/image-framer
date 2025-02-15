@@ -2,15 +2,18 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { Button } from '../components/button';
+import { evalManifestWithRetries } from "next/dist/server/load-components";
 
 export default function ImageOverlay() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  let img_parent_ref = useRef<HTMLImageElement>(null);
   const placeholderX = 35; // Adjust X position
   const placeholderY = 270; // Adjust Y position
   const placeholderWidth = 200;
   const placeholderHeight = 200;
-  let img_parent:HTMLImageElement;
+  const [loading, setLoading] = useState(true); // State to track loading
+  let img_parent: HTMLImageElement;
 
   useEffect(() => {
     img_parent = document.createElement("img");
@@ -35,8 +38,13 @@ export default function ImageOverlay() {
     img_parent.src = "https://i.ibb.co/k6r8Df8J/Whats-App-Image-2025-02-15-at-15-31-33.jpg"; // Ensure the image is inside the "public" folder
     img_parent.crossOrigin = "anonymous"; // Allows CORS images
     const ctx = canvas.getContext("2d");
-    if(ctx)
-      ctx.drawImage(img_parent, 0, 0, 500, 500);
+    if (ctx) {
+      img_parent.onload = () => {
+        setLoading(false); // Hide loader if image fails to load
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawings
+        ctx.drawImage(img_parent, 0, 0, 500, 500);
+      }
+    }
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,13 +96,12 @@ export default function ImageOverlay() {
       };
     }
   };
-
   return (
     <div className="flex flex-col items-center gap-4 p-4">
       <Image src="https://i.ibb.co/YBzfQgsL/aolf-logo-1.png" width={200} height={50} alt="123" className="border rounded-lg" />
       <canvas ref={canvasRef} width={500} height={500} className="border rounded-lg" />
       <input placeholder="Upload Image" type="file" accept="image/*" onChange={handleImageUpload} />
       <Button onClick={handleDownload}>Download Image</Button>
-    </div>
-  );
+    </div>)
+
 }
